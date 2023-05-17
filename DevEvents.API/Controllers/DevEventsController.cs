@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DevEvents.API.Controllers
 {
-	 // Coloca este nome na rota
+	// Coloca este nome na rota
 
 	[Route("api/dev-events")]
 	[ApiController]
@@ -24,8 +24,14 @@ namespace DevEvents.API.Controllers
 		//Pontos de Acesso
 
 
-		// Buscar todos
+		
+		/// <summary>
+		/// Obter todos os eventos
+		/// </summary>
+		/// <returns>Coleção de eventos</returns>
+		/// <response code= "200">Sucesso</response>
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		public ActionResult GetAll()
 		{
 			// Efetua a busca daqueles eventos que NÃO estão cancelados
@@ -36,14 +42,23 @@ namespace DevEvents.API.Controllers
 
 		// Buscar pelo ID
 		// Recebe o parâmetro ID
+		/// <summary>
+		/// Obter um evento
+		/// </summary>
+		/// <param name="id">Identificador do evento</param>
+		/// <returns>Dados sobre os eventos</returns>
+		/// <response code = "200">Sucesso</response>
+		/// /// <response code = "404">Não encontrado</response>
 		[HttpGet("{id}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public ActionResult GetById(Guid id)
 		{
 			//Busca onde o ID for igual a ID
 			var devEvents = _context.DevEvents.SingleOrDefault(d => d.Id == id);
 
 			// SE  devEvents for igual a nulo, retorne NotFound
-			if(devEvents == null)
+			if (devEvents == null)
 			{
 				return NotFound();
 			}
@@ -59,7 +74,7 @@ namespace DevEvents.API.Controllers
 			_context.DevEvents.Add(devEvent);
 
 			//está colocando um nome para o objeto que está sendo cadastrado e também um id
-			return CreatedAtAction(nameof(GetById), new {id = devEvent.Id}, devEvent);
+			return CreatedAtAction(nameof(GetById), new { id = devEvent.Id }, devEvent);
 		}
 
 		// Update - Atualização 
@@ -70,7 +85,7 @@ namespace DevEvents.API.Controllers
 		{
 			// Repete o ByID pois primeiro faremos uma verificação, para depois atualizar.
 			var devEvents = _context.DevEvents.SingleOrDefault(d => d.Id == id);
-					
+
 			if (devEvents == null)
 			{
 				return NotFound();
@@ -82,7 +97,7 @@ namespace DevEvents.API.Controllers
 
 		// Delete
 		// Recebe por parâmetro id 
-		
+
 		[HttpDelete("{id}")]
 		public ActionResult Delete(Guid id)
 		{
@@ -100,7 +115,20 @@ namespace DevEvents.API.Controllers
 
 		}
 
+		[HttpPost("{id}/speakers")]
+		public IActionResult PostSpeaker(Guid id, DevEventsSpeakers speakers)
+		{
+			var devEvents = _context.DevEvents.SingleOrDefault(d => d.Id == id);
 
+			if (devEvents == null)
+			{
+				return NotFound();
+			}
+
+			devEvents.Speakers.Add(speakers);
+
+			return NoContent();
+		}
 
 	}
 }
