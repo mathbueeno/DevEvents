@@ -66,9 +66,17 @@ namespace DevEvents.API.Controllers
 			return Ok(devEvents);
 		}
 
+		/// <summary>
+		/// Cadastro do Evento
+		/// </summary>
+		/// <remarks>
+		/// {objeto JSON}
+		/// </remarks>
+		/// <param name="devEvent"></param>
+		/// <returns>Objeto recem criado</returns>
+		/// <response code = "201">Sucesso</response>
 		[HttpPost]
-		// Post - 
-		// Recebe por parâmetro o DevEvent
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		public ActionResult Post(DevEvent devEvent)
 		{
 			_context.DevEvents.Add(devEvent);
@@ -77,10 +85,20 @@ namespace DevEvents.API.Controllers
 			return CreatedAtAction(nameof(GetById), new { id = devEvent.Id }, devEvent);
 		}
 
-		// Update - Atualização 
-		// Recebe por parâmetro id e devEvent
-		// api/dev-events/id
+		/// <summary>
+		/// Atualizar o evento
+		/// </summary>
+		/// <remarks>
+		/// {obj json}
+		/// </remarks>
+		/// <param name="id">identificador dos eventos</param>
+		/// <param name="input">Dados do evento</param>
+		/// <returns>Nada</returns>
+		/// <response code="204">Sucesso</response>
+		/// /// <response code="404">Não encontrado</response>
 		[HttpPut("{id}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public ActionResult Update(Guid id, DevEvent input)
 		{
 			// Repete o ByID pois primeiro faremos uma verificação, para depois atualizar.
